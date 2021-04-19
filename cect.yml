@@ -1,0 +1,14 @@
+num_messages: 1000
+report_period: 2.0
+senders:
+  - { mean_time: 0.005, failure_rate: 0.50 }
+  - { mean_time: 0.010, failure_rate: 0.45 }
+  - { mean_time: 0.015, failure_rate: 0.40 }
+  - { mean_time: 0.020, failure_rate: 0.35 }
+  - { mean_time: 0.025, failure_rate: 0.30 }
+  - { mean_time: 0.030, failure_rate: 0.25 }
+  - { mean_time: 0.035, failure_rate: 0.20 }
+  - { mean_time: 0.040, failure_rate: 0.15 }
+  - { mean_time: 0.045, failure_rate: 0.05 }
+  - { mean_time: 0.050, failure_rate: 0.01 }
+  - { mean_time: 0.01, failure_rate: 0.3 }
