@@ -1,0 +1,14 @@
+    Finished dev [unoptimized + debuginfo] target(s) in 0.81s
+     Running `e:\Personal_Projects\cect\target\debug\cect.exe e:\Personal_Projects\cect\test\pytest_config.yml`
+[2023-03-06T01:56:45Z INFO  cect] Config { num_messages: 1000, sender_configs: [SenderConfig { mean_time: 0.01, failure_rate: 0.0 }], report_period: 2.0 }
+[2023-03-06T01:56:45Z INFO  cect] Expected rate 100.000/s
+[2023-03-06T01:56:45Z INFO  cect::monitor] MONITOR sent: 0, failed: 0, rate: N/A
+[2023-03-06T01:56:47Z INFO  cect::monitor] MONITOR sent: 120, failed: 0, rate: 59.803/s
+[2023-03-06T01:56:49Z INFO  cect::monitor] MONITOR sent: 238, failed: 0, rate: 59.242/s
+[2023-03-06T01:56:51Z INFO  cect::monitor] MONITOR sent: 353, failed: 0, rate: 58.544/s
+[2023-03-06T01:56:53Z INFO  cect::monitor] MONITOR sent: 476, failed: 0, rate: 59.262/s
+[2023-03-06T01:56:55Z INFO  cect::monitor] MONITOR sent: 597, failed: 0, rate: 59.450/s
+[2023-03-06T01:56:57Z INFO  cect::monitor] MONITOR sent: 715, failed: 0, rate: 59.308/s
+[2023-03-06T01:56:59Z INFO  cect::monitor] MONITOR sent: 833, failed: 0, rate: 59.226/s
+[2023-03-06T01:57:01Z INFO  cect::monitor] MONITOR sent: 954, failed: 0, rate: 59.351/s
+[2023-03-06T01:57:03Z INFO  cect::monitor] MONITOR sent: 1000, failed: 0, rate: 55.316/s

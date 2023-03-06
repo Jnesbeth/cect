@@ -1,0 +1,5 @@
+num_messages: 1000
+report_period: 2.0
+senders:
+- failure_rate: 1.0
+  mean_time: 0.001

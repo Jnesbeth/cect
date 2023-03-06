@@ -1,0 +1,7 @@
+README.md
+Notes.md
+.env
+.gitignore
+Dockerfile
+docker-compose.yml
+test

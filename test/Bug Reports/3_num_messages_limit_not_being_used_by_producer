@@ -1,0 +1,25 @@
+### Title: num_messages limit not being used by producer
+
+### Reproducible Steps:
+1. In the configuration set at least one of the failure_rate for senders to 1.0
+```
+num_messages: 1000
+report_period: 2.0
+senders:
+  - mean_time: 0.01
+    failure_rate: 1.00
+```
+2. Run the application: cargo run -- cect.yml
+
+### Observations:
+1. Setting failure_rate to 1.0 (%100) the simulation seems to not stop without manual intervention:
+```
+[2023-03-05T17:51:47Z INFO  cect::monitor] MONITOR sent: 0, failed: 12400, rate: N/A
+[2023-03-05T17:51:48Z INFO  cect::monitor] MONITOR sent: 0, failed: 12466, rate: N/A
+[2023-03-05T17:51:49Z INFO  cect::monitor] MONITOR sent: 0, failed: 12530, rate: N/A
+error: process didn't exit successfully: `target\debug\cect.exe cect.yml` (exit code: 0xc000013a, STATUS_CONTROL_C_EXIT)
+```
+2. This might be a misunderstanding of what the failure_rate means and the num_messages are based on the successful messages after the fact. If there are no successful messages then the script will keep going until it hits the num_messages limit. However, from the README: A single producer task sends `num_messages` random messages into a message channel. Which seems to mean that the producer should have stopped after sending the configured num_messages
+
+### Expected Results:
+1. The simulation stops at the configured num_messages limit

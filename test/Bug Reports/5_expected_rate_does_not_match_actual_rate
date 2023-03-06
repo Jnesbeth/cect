@@ -1,0 +1,30 @@
+### Title: The expected rate does not match the actual rate
+
+### Reproducible Steps:
+1. In the configuration set at least one of the mean_time for senders to 0.001 Eg:
+```
+num_messages: 1000
+report_period: 2.0
+senders:
+  - mean_time: 0.001
+    failure_rate: 0.00
+```
+2. Run the application: cargo run -- cect.yml
+
+### Observations:
+1. The following is being reported:
+```
+[2023-03-05T22:39:38Z INFO  cect] Expected rate 1000.000/s
+[2023-03-05T22:39:38Z INFO  cect::monitor] MONITOR sent: 0, failed: 0, rate: N/A
+[2023-03-05T22:39:40Z INFO  cect::monitor] MONITOR sent: 130, failed: 0, rate: 64.536/s
+[2023-03-05T22:39:42Z INFO  cect::monitor] MONITOR sent: 261, failed: 0, rate: 64.905/s
+[2023-03-05T22:39:44Z INFO  cect::monitor] MONITOR sent: 391, failed: 0, rate: 64.871/s
+[2023-03-05T22:39:46Z INFO  cect::monitor] MONITOR sent: 523, failed: 0, rate: 65.099/s
+[2023-03-05T22:39:48Z INFO  cect::monitor] MONITOR sent: 653, failed: 0, rate: 65.042/s
+[2023-03-05T22:39:50Z INFO  cect::monitor] MONITOR sent: 783, failed: 0, rate: 65.015/s
+[2023-03-05T22:39:52Z INFO  cect::monitor] MONITOR sent: 914, failed: 0, rate: 65.055/s
+```
+2. Seems as if the expected rate is calculated using the mean_time in some form to get that expected rate, however it does not seem to match the actual rate reported from the monitor logs 
+
+### Expected Results:
+1. The expected rate is close to or matches the actual rate.

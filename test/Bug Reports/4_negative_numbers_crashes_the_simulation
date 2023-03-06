@@ -1,0 +1,64 @@
+### Title: Negative numbers crashes the simulation
+
+### Reproducible Steps:
+1. In the configuration set each of the following configurations to a negative number:
+    * report_period
+    * num_messages
+    * mean_time
+    * failure_rate
+2. Run the application: cargo run -- cect.yml
+
+### Observations:
+1. Setting report_period to -1:
+```
+$ cargo run -- cect.yml
+    Finished dev [unoptimized + debuginfo] target(s) in 0.74s
+     Running `target\debug\cect.exe cect.yml`
+[2023-03-05T20:55:08Z INFO  cect] Config { num_messages: 1000, sender_configs: [SenderConfig { mean_time: 0.001, failure_rate: 0.5 }], report_period: -2.0 }
+[2023-03-05T20:55:08Z INFO  cect] Expected rate 500.000/s
+thread 'async-std/runtime' panicked at 'can not convert float seconds to Duration: value is negative', /rustc/d5a82bbd26e1ad8b7401f6a718a9c57c96905483\library\core\src\time.rs:742:23
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+thread 'main' panicked at 'task has failed', C:\Users\jnesb\.cargo\registry\src\github.com-1ecc6299db9ec823\async-task-4.0.3\src\task.rs:368:45
+error: process didn't exit successfully: `target\debug\cect.exe cect.yml` (exit code: 101)
+```
+2. Setting num_messages to -1000:
+```
+$ cargo run -- cect.yml
+    Finished dev [unoptimized + debuginfo] target(s) in 0.74s
+     Running `target\debug\cect.exe cect.yml`
+[2023-03-05T20:55:08Z INFO  cect] Config { num_messages: 1000, sender_configs: [SenderConfig { mean_time: 0.001, failure_rate: 0.5 }], report_period: -2.0 }
+[2023-03-05T20:55:08Z INFO  cect] Expected rate 500.000/s
+thread 'async-std/runtime' panicked at 'can not convert float seconds to Duration: value is negative', /rustc/d5a82bbd26e1ad8b7401f6a718a9c57c96905483\library\core\src\time.rs:742:23
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+thread 'main' panicked at 'task has failed', C:\Users\jnesb\.cargo\registry\src\github.com-1ecc6299db9ec823\async-task-4.0.3\src\task.rs:368:45
+error: process didn't exit successfully: `target\debug\cect.exe cect.yml` (exit code: 101)
+```
+3. Setting mean_time to -1:
+```
+$ cargo run -- cect.yml
+    Finished dev [unoptimized + debuginfo] target(s) in 0.82s
+     Running `target\debug\cect.exe cect.yml`
+[2023-03-05T20:58:59Z INFO  cect] Config { num_messages: 1000, sender_configs: [SenderConfig { mean_time: -1.0, failure_rate: 0.5 }], report_period: 2.0 }
+[2023-03-05T20:58:59Z INFO  cect] Expected rate -0.500/s
+[2023-03-05T20:58:59Z INFO  cect::monitor] MONITOR sent: 0, failed: 0, rate: N/A
+thread 'async-std/runtime' panicked at 'called `Result::unwrap()` on an `Err` value: ScaleTooSmall', src\sender.rs:31:68
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+thread 'main' panicked at 'task has failed', C:\Users\jnesb\.cargo\registry\src\github.com-1ecc6299db9ec823\async-task-4.0.3\src\task.rs:368:45
+error: process didn't exit successfully: `target\debug\cect.exe cect.yml` (exit code: 101)
+```
+4. Setting failure_rate to -1:
+```
+$ cargo run -- cect.yml
+    Finished dev [unoptimized + debuginfo] target(s) in 0.73s
+     Running `target\debug\cect.exe cect.yml`
+[2023-03-05T20:59:39Z INFO  cect] Config { num_messages: 1000, sender_configs: [SenderConfig { mean_time: 0.001, failure_rate: -1.0 }], report_period: 2.0 }
+[2023-03-05T20:59:39Z INFO  cect] Expected rate 2000.000/s
+[2023-03-05T20:59:39Z INFO  cect::monitor] MONITOR sent: 0, failed: 0, rate: N/A
+thread 'async-std/runtime' panicked at 'called `Result::unwrap()` on an `Err` value: InvalidProbability', C:\Users\jnesb\.cargo\registry\src\github.com-1ecc6299db9ec823\rand-0.8.3\src\rng.rs:269:50
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+thread 'main' panicked at 'task has failed', C:\Users\jnesb\.cargo\registry\src\github.com-1ecc6299db9ec823\async-task-4.0.3\src\task.rs:368:45
+error: process didn't exit successfully: `target\debug\cect.exe cect.yml` (exit code: 101)
+```
+
+### Expected Results:
+1. The simulation reports the issue with the configuration and exits gracefully.

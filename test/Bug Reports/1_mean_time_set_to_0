@@ -1,0 +1,179 @@
+### Title: mean_time cannot be set to 0
+
+### Reproducible Steps:
+1. In the configuration set at least one of the mean_time for senders to 0:
+```
+num_messages: 1000
+report_period: 2.0
+senders:
+  - mean_time: 0.00
+    failure_rate: 0.30
+```
+2. Run the application: RUST_BACKTRACE=1 cargo run -- cect.yml
+
+### Observations:
+1. The following stack trace is reported:
+```
+    Finished dev [unoptimized + debuginfo] target(s) in 0.67s
+    Running \`target\debug\cect.exe cect.yml\`ca
+[2023-03-05T17:55:38Z INFO  cect] Config { num_messages: 1000, sender_configs: [SenderConfig { mean_time: 0.0, failure_rate: 0.0 }], report_period: 1.0 }
+[2023-03-05T17:55:38Z INFO  cect] Expected rate inf/s
+thread '[2023-03-05T17:55:38Z INFO  cect::monitor] MONITOR sent: 0, failed: 0, rate: N/A
+async-std/runtime' panicked at 'called \`Result::unwrap()\` on an \`Err\` value: ScaleTooSmall', src\sender.rs:31:68
+stack backtrace:
+0: std::panicking::begin_panic_handler
+            at /rustc/d5a82bbd26e1ad8b7401f6a718a9c57c96905483/library\std\src\panicking.rs:575
+1: core::panicking::panic_fmt
+            at /rustc/d5a82bbd26e1ad8b7401f6a718a9c57c96905483/library\core\src\panicking.rs:64
+2: core::result::unwrap_failed
+            at /rustc/d5a82bbd26e1ad8b7401f6a718a9c57c96905483/library\core\src\result.rs:1791
+3: enum2$<core::result::Result<rand_distr::gamma::Gamma<f64>,rand_distr::gamma::Error> >::unwrap<rand_distr::gamma::Gamma<f64>,rand_distr::gamma::Error>
+            at /rustc/d5a82bbd26e1ad8b7401f6a718a9c57c96905483\library\core\src\result.rs:1113
+4: cect::sender::sender::async_fn$0
+            at .\src\sender.rs:31
+5: async_std::task::builder::impl$1::poll::closure$0<enum2$<cect::sender::sender::async_fn_env$0> >
+            at C:\Users\jnesb\.cargo\registry\src\github.com-1ecc6299db9ec823\async-std-1.9.0\src\task\builder.rs:199
+6: async_std::task::task_locals_wrapper::impl$0::set_current::closure$0<async_std::task::builder::impl$1::poll::closure_env$0<enum2$<cect::sender::sender::async_fn_env$0> >,enum2$<core::task::poll::Poll<enum2$<core::result::Result<tuple$<>,anyhow::Error> > >     
+            at C:\Users\jnesb\.cargo\registry\src\github.com-1ecc6299db9ec823\async-std-1.9.0\src\task\task_locals_wrapper.rs:60
+7: std::thread::local::LocalKey<core::cell::Cell<ptr_const$<async_std::task::task_locals_wrapper::TaskLocalsWrapper> > >::try_with<core::cell::Cell<ptr_const$<async_std::task::task_locals_wrapper::TaskLocalsWrapper> >,async_std::task::task_locals_wrapper::im     
+            at /rustc/d5a82bbd26e1ad8b7401f6a718a9c57c96905483\library\std\src\thread\local.rs:446
+8: std::thread::local::LocalKey<core::cell::Cell<ptr_const$<async_std::task::task_locals_wrapper::TaskLocalsWrapper> > >::with<core::cell::Cell<ptr_const$<async_std::task::task_locals_wrapper::TaskLocalsWrapper> >,async_std::task::task_locals_wrapper::impl$0     
+            at /rustc/d5a82bbd26e1ad8b7401f6a718a9c57c96905483\library\std\src\thread\local.rs:422
+9: async_std::task::task_locals_wrapper::TaskLocalsWrapper::set_current<async_std::task::builder::impl$1::poll::closure_env$0<enum2$<cect::sender::sender::async_fn_env$0> >,enum2$<core::task::poll::Poll<enum2$<core::result::Result<tuple$<>,anyhow::Error> > >     
+            at C:\Users\jnesb\.cargo\registry\src\github.com-1ecc6299db9ec823\async-std-1.9.0\src\task\task_locals_wrapper.rs:55
+10: async_std::task::builder::impl$1::poll<enum2$<cect::sender::sender::async_fn_env$0> >
+            at C:\Users\jnesb\.cargo\registry\src\github.com-1ecc6299db9ec823\async-std-1.9.0\src\task\builder.rs:197
+11: async_executor::impl$4::spawn::async_block$0<enum2$<core::result::Result<tuple$<>,anyhow::Error> >,async_std::task::builder::SupportTaskLocals<enum2$<cect::sender::sender::async_fn_env$0> > >
+            at C:\Users\jnesb\.cargo\registry\src\github.com-1ecc6299db9ec823\async-executor-1.4.0\src\lib.rs:138
+12: async_task::raw::RawTask<enum2$<async_executor::impl$4::spawn::async_block_env$0<enum2$<core::result::Result<tuple$<>,anyhow::Error> >,async_std::task::builder::SupportTaskLocals<enum2$<cect::sender::sender::async_fn_env$0> > > >,enum2$<core::result::Resu     
+            at C:\Users\jnesb\.cargo\registry\src\github.com-1ecc6299db9ec823\async-task-4.0.3\src\raw.rs:489
+13: async_task::runnable::Runnable::run
+            at C:\Users\jnesb\.cargo\registry\src\github.com-1ecc6299db9ec823\async-task-4.0.3\src\runnable.rs:309
+14: async_executor::impl$4::run::async_fn$0::async_block$0<tuple$<>,futures_lite::future::Pending<tuple$<> > >
+            at C:\Users\jnesb\.cargo\registry\src\github.com-1ecc6299db9ec823\async-executor-1.4.0\src\lib.rs:229
+15: futures_lite::future::impl$12::poll<tuple$<>,futures_lite::future::Pending<tuple$<> >,enum2$<async_executor::impl$4::run::async_fn$0::async_block_env$0<tuple$<>,futures_lite::future::Pending<tuple$<> > > > >
+            at C:\Users\jnesb\.cargo\registry\src\github.com-1ecc6299db9ec823\futures-lite-1.11.3\src\future.rs:529
+16: async_executor::impl$4::run::async_fn$0<tuple$<>,futures_lite::future::Pending<tuple$<> > >
+            at C:\Users\jnesb\.cargo\registry\src\github.com-1ecc6299db9ec823\async-executor-1.4.0\src\lib.rs:236
+17: futures_lite::future::impl$12::poll<tuple$<>,enum2$<async_executor::impl$9::run::async_fn_env$0<tuple$<>,enum2$<async_global_executor::threading::thread_main_loop::closure$1::closure$0::async_block_env$0> > >,enum2$<async_executor::impl$4::run::async_fn_e     
+            at C:\Users\jnesb\.cargo\registry\src\github.com-1ecc6299db9ec823\futures-lite-1.11.3\src\future.rs:529
+18: async_io::driver::block_on<tuple$<>,futures_lite::future::Or<enum2$<async_executor::impl$9::run::async_fn_env$0<tuple$<>,enum2$<async_global_executor::threading::thread_main_loop::closure$1::closure$0::async_block_env$0> > >,enum2$<async_executor::impl$4:     
+            at C:\Users\jnesb\.cargo\registry\src\github.com-1ecc6299db9ec823\async-io-1.4.0\src\driver.rs:142
+19: async_global_executor::reactor::block_on::closure$0<futures_lite::future::Or<enum2$<async_executor::impl$9::run::async_fn_env$0<tuple$<>,enum2$<async_global_executor::threading::thread_main_loop::closure$1::closure$0::async_block_env$0> > >,enum2$<async_e     
+            at C:\Users\jnesb\.cargo\registry\src\github.com-1ecc6299db9ec823\async-global-executor-2.0.2\src\reactor.rs:3
+20: async_global_executor::reactor::block_on<futures_lite::future::Or<enum2$<async_executor::impl$9::run::async_fn_env$0<tuple$<>,enum2$<async_global_executor::threading::thread_main_loop::closure$1::closure$0::async_block_env$0> > >,enum2$<async_executor::im
+            at C:\Users\jnesb\.cargo\registry\src\github.com-1ecc6299db9ec823\async-global-executor-2.0.2\src\reactor.rs:12
+21: async_global_executor::threading::thread_main_loop::closure$1::closure$0
+            at C:\Users\jnesb\.cargo\registry\src\github.com-1ecc6299db9ec823\async-global-executor-2.0.2\src\threading.rs:95
+22: std::thread::local::LocalKey<async_executor::LocalExecutor>::try_with<async_executor::LocalExecutor,async_global_executor::threading::thread_main_loop::closure$1::closure_env$0,tuple$<> >
+            at /rustc/d5a82bbd26e1ad8b7401f6a718a9c57c96905483\library\std\src\thread\local.rs:446
+23: std::thread::local::LocalKey<async_executor::LocalExecutor>::with<async_executor::LocalExecutor,async_global_executor::threading::thread_main_loop::closure$1::closure_env$0,tuple$<> >
+            at /rustc/d5a82bbd26e1ad8b7401f6a718a9c57c96905483\library\std\src\thread\local.rs:422
+24: async_global_executor::threading::thread_main_loop::closure$1
+            at C:\Users\jnesb\.cargo\registry\src\github.com-1ecc6299db9ec823\async-global-executor-2.0.2\src\threading.rs:89
+25: std::panicking::try::do_call<async_global_executor::threading::thread_main_loop::closure_env$1,tuple$<> >
+            at /rustc/d5a82bbd26e1ad8b7401f6a718a9c57c96905483\library\std\src\panicking.rs:483
+26: async_channel::impl$25::poll<tuple$<> >
+27: std::panicking::try<tuple$<>,async_global_executor::threading::thread_main_loop::closure_env$1>
+            at /rustc/d5a82bbd26e1ad8b7401f6a718a9c57c96905483\library\std\src\panicking.rs:447
+28: std::panic::catch_unwind<async_global_executor::threading::thread_main_loop::closure_env$1,tuple$<> >
+            at /rustc/d5a82bbd26e1ad8b7401f6a718a9c57c96905483\library\std\src\panic.rs:137
+29: async_global_executor::threading::thread_main_loop
+            at C:\Users\jnesb\.cargo\registry\src\github.com-1ecc6299db9ec823\async-global-executor-2.0.2\src\threading.rs:88
+30: core::ops::function::FnOnce::call_once<void (*)(),tuple$<> >
+            at /rustc/d5a82bbd26e1ad8b7401f6a718a9c57c96905483\library\core\src\ops\function.rs:507
+note: Some details are omitted, run with \`RUST_BACKTRACE=full\` for a verbose backtrace.
+thread 'main' panicked at 'task has failed', C:\Users\jnesb\.cargo\registry\src\github.com-1ecc6299db9ec823\async-task-4.0.3\src\task.rs:368:45
+stack backtrace:
+0: std::panicking::begin_panic_handler
+            at /rustc/d5a82bbd26e1ad8b7401f6a718a9c57c96905483/library\std\src\panicking.rs:575
+1: core::panicking::panic_fmt
+            at /rustc/d5a82bbd26e1ad8b7401f6a718a9c57c96905483/library\core\src\panicking.rs:64
+2: core::panicking::panic_display<ref$<str$> >
+            at /rustc/d5a82bbd26e1ad8b7401f6a718a9c57c96905483/library\core\src\panicking.rs:135
+3: core::panicking::panic_str
+            at /rustc/d5a82bbd26e1ad8b7401f6a718a9c57c96905483/library\core\src\panicking.rs:119
+4: core::option::expect_failed
+            at /rustc/d5a82bbd26e1ad8b7401f6a718a9c57c96905483/library\core\src\option.rs:1879
+5: enum2$<core::option::Option<enum2$<core::result::Result<tuple$<>,anyhow::Error> > > >::expect<enum2$<core::result::Result<tuple$<>,anyhow::Error> > >
+            at /rustc/d5a82bbd26e1ad8b7401f6a718a9c57c96905483\library\core\src\option.rs:741
+6: async_task::task::impl$7::poll<enum2$<core::result::Result<tuple$<>,anyhow::Error> > >
+            at C:\Users\jnesb\.cargo\registry\src\github.com-1ecc6299db9ec823\async-task-4.0.3\src\task.rs:368
+7: core::future::future::impl$0::poll<async_task::task::Task<enum2$<core::result::Result<tuple$<>,anyhow::Error> > > >
+            at /rustc/d5a82bbd26e1ad8b7401f6a718a9c57c96905483\library\core\src\future\future.rs:112
+8: async_std::task::join_handle::impl$2::poll<enum2$<core::result::Result<tuple$<>,anyhow::Error> > >
+            at C:\Users\jnesb\.cargo\registry\src\github.com-1ecc6299db9ec823\async-std-1.9.0\src\task\join_handle.rs:83
+9: futures_core::future::impl$2::try_poll<async_std::task::join_handle::JoinHandle<enum2$<core::result::Result<tuple$<>,anyhow::Error> > >,tuple$<>,anyhow::Error>
+            at C:\Users\jnesb\.cargo\registry\src\github.com-1ecc6299db9ec823\futures-core-0.3.14\src\future.rs:84
+10: futures_util::future::try_maybe_done::impl$3::poll<async_std::task::join_handle::JoinHandle<enum2$<core::result::Result<tuple$<>,anyhow::Error> > > >
+            at C:\Users\jnesb\.cargo\registry\src\github.com-1ecc6299db9ec823\futures-util-0.3.14\src\future\try_maybe_done.rs:80
+11: futures_core::future::impl$2::try_poll<enum2$<futures_util::future::try_maybe_done::TryMaybeDone<async_std::task::join_handle::JoinHandle<enum2$<core::result::Result<tuple$<>,anyhow::Error> > > > >,tuple$<>,anyhow::Error>
+            at C:\Users\jnesb\.cargo\registry\src\github.com-1ecc6299db9ec823\futures-core-0.3.14\src\future.rs:84
+12: futures_util::future::try_join_all::impl$1::poll<async_std::task::join_handle::JoinHandle<enum2$<core::result::Result<tuple$<>,anyhow::Error> > > >
+            at C:\Users\jnesb\.cargo\registry\src\github.com-1ecc6299db9ec823\futures-util-0.3.14\src\future\try_join_all.rs:111
+13: cect::main::main::async_fn$0
+            at .\src\main.rs:61
+14: cect::main::async_block$0
+            at .\src\main.rs:27
+15: async_std::task::builder::impl$1::poll::closure$0<enum2$<cect::main::async_block_env$0> >
+            at C:\Users\jnesb\.cargo\registry\src\github.com-1ecc6299db9ec823\async-std-1.9.0\src\task\builder.rs:199
+16: async_std::task::task_locals_wrapper::impl$0::set_current::closure$0<async_std::task::builder::impl$1::poll::closure_env$0<enum2$<cect::main::async_block_env$0> >,enum2$<core::task::poll::Poll<enum2$<core::result::Result<tuple$<>,anyhow::Error> > > > >        
+            at C:\Users\jnesb\.cargo\registry\src\github.com-1ecc6299db9ec823\async-std-1.9.0\src\task\task_locals_wrapper.rs:60
+17: std::thread::local::LocalKey<core::cell::Cell<ptr_const$<async_std::task::task_locals_wrapper::TaskLocalsWrapper> > >::try_with<core::cell::Cell<ptr_const$<async_std::task::task_locals_wrapper::TaskLocalsWrapper> >,async_std::task::task_locals_wrapper::im     
+            at /rustc/d5a82bbd26e1ad8b7401f6a718a9c57c96905483\library\std\src\thread\local.rs:446
+18: std::thread::local::LocalKey<core::cell::Cell<ptr_const$<async_std::task::task_locals_wrapper::TaskLocalsWrapper> > >::with<core::cell::Cell<ptr_const$<async_std::task::task_locals_wrapper::TaskLocalsWrapper> >,async_std::task::task_locals_wrapper::impl$0     
+            at /rustc/d5a82bbd26e1ad8b7401f6a718a9c57c96905483\library\std\src\thread\local.rs:422
+19: async_std::task::task_locals_wrapper::TaskLocalsWrapper::set_current<async_std::task::builder::impl$1::poll::closure_env$0<enum2$<cect::main::async_block_env$0> >,enum2$<core::task::poll::Poll<enum2$<core::result::Result<tuple$<>,anyhow::Error> > > > >        
+            at C:\Users\jnesb\.cargo\registry\src\github.com-1ecc6299db9ec823\async-std-1.9.0\src\task\task_locals_wrapper.rs:55
+20: async_std::task::builder::impl$1::poll<enum2$<cect::main::async_block_env$0> >
+            at C:\Users\jnesb\.cargo\registry\src\github.com-1ecc6299db9ec823\async-std-1.9.0\src\task\builder.rs:197
+21: futures_lite::future::impl$12::poll<enum2$<core::result::Result<tuple$<>,anyhow::Error> >,async_std::task::builder::SupportTaskLocals<enum2$<cect::main::async_block_env$0> >,enum2$<async_executor::impl$4::run::async_fn$0::async_block_env$0<enum2$<core::re     
+            at C:\Users\jnesb\.cargo\registry\src\github.com-1ecc6299db9ec823\futures-lite-1.11.3\src\future.rs:526
+22: async_executor::impl$4::run::async_fn$0<enum2$<core::result::Result<tuple$<>,anyhow::Error> >,async_std::task::builder::SupportTaskLocals<enum2$<cect::main::async_block_env$0> > >
+            at C:\Users\jnesb\.cargo\registry\src\github.com-1ecc6299db9ec823\async-executor-1.4.0\src\lib.rs:236
+23: async_executor::impl$9::run::async_fn$0<enum2$<core::result::Result<tuple$<>,anyhow::Error> >,async_std::task::builder::SupportTaskLocals<enum2$<cect::main::async_block_env$0> > >
+            at C:\Users\jnesb\.cargo\registry\src\github.com-1ecc6299db9ec823\async-executor-1.4.0\src\lib.rs:437
+24: async_io::driver::block_on<enum2$<core::result::Result<tuple$<>,anyhow::Error> >,enum2$<async_executor::impl$9::run::async_fn_env$0<enum2$<core::result::Result<tuple$<>,anyhow::Error> >,async_std::task::builder::SupportTaskLocals<enum2$<cect::main::async_     
+            at C:\Users\jnesb\.cargo\registry\src\github.com-1ecc6299db9ec823\async-io-1.4.0\src\driver.rs:142
+25: async_global_executor::reactor::block_on::closure$0<enum2$<async_executor::impl$9::run::async_fn_env$0<enum2$<core::result::Result<tuple$<>,anyhow::Error> >,async_std::task::builder::SupportTaskLocals<enum2$<cect::main::async_block_env$0> > > >,enum2$<cor     
+            at C:\Users\jnesb\.cargo\registry\src\github.com-1ecc6299db9ec823\async-global-executor-2.0.2\src\reactor.rs:3
+26: async_global_executor::reactor::block_on<enum2$<async_executor::impl$9::run::async_fn_env$0<enum2$<core::result::Result<tuple$<>,anyhow::Error> >,async_std::task::builder::SupportTaskLocals<enum2$<cect::main::async_block_env$0> > > >,enum2$<core::result::     
+            at C:\Users\jnesb\.cargo\registry\src\github.com-1ecc6299db9ec823\async-global-executor-2.0.2\src\reactor.rs:12
+27: async_global_executor::executor::block_on::closure$0<async_std::task::builder::SupportTaskLocals<enum2$<cect::main::async_block_env$0> >,enum2$<core::result::Result<tuple$<>,anyhow::Error> > >
+            at C:\Users\jnesb\.cargo\registry\src\github.com-1ecc6299db9ec823\async-global-executor-2.0.2\src\executor.rs:26
+28: std::thread::local::LocalKey<async_executor::LocalExecutor>::try_with<async_executor::LocalExecutor,async_global_executor::executor::block_on::closure_env$0<async_std::task::builder::SupportTaskLocals<enum2$<cect::main::async_block_env$0> >,enum2$<core::r     
+            at /rustc/d5a82bbd26e1ad8b7401f6a718a9c57c96905483\library\std\src\thread\local.rs:446
+29: std::thread::local::LocalKey<async_executor::LocalExecutor>::with<async_executor::LocalExecutor,async_global_executor::executor::block_on::closure_env$0<async_std::task::builder::SupportTaskLocals<enum2$<cect::main::async_block_env$0> >,enum2$<core::resul     
+            at /rustc/d5a82bbd26e1ad8b7401f6a718a9c57c96905483\library\std\src\thread\local.rs:422
+30: async_global_executor::executor::block_on<async_std::task::builder::SupportTaskLocals<enum2$<cect::main::async_block_env$0> >,enum2$<core::result::Result<tuple$<>,anyhow::Error> > >
+            at C:\Users\jnesb\.cargo\registry\src\github.com-1ecc6299db9ec823\async-global-executor-2.0.2\src\executor.rs:26
+31: async_std::task::builder::impl$0::blocking::closure$0::closure$0<enum2$<cect::main::async_block_env$0>,enum2$<core::result::Result<tuple$<>,anyhow::Error> > >
+            at C:\Users\jnesb\.cargo\registry\src\github.com-1ecc6299db9ec823\async-std-1.9.0\src\task\builder.rs:171
+32: async_std::task::task_locals_wrapper::impl$0::set_current::closure$0<async_std::task::builder::impl$0::blocking::closure$0::closure_env$0<enum2$<cect::main::async_block_env$0>,enum2$<core::result::Result<tuple$<>,anyhow::Error> > >,enum2$<core::result::Re     
+            at C:\Users\jnesb\.cargo\registry\src\github.com-1ecc6299db9ec823\async-std-1.9.0\src\task\task_locals_wrapper.rs:60
+33: std::thread::local::LocalKey<core::cell::Cell<ptr_const$<async_std::task::task_locals_wrapper::TaskLocalsWrapper> > >::try_with<core::cell::Cell<ptr_const$<async_std::task::task_locals_wrapper::TaskLocalsWrapper> >,async_std::task::task_locals_wrapper::im     
+            at /rustc/d5a82bbd26e1ad8b7401f6a718a9c57c96905483\library\std\src\thread\local.rs:446
+34: std::thread::local::LocalKey<core::cell::Cell<ptr_const$<async_std::task::task_locals_wrapper::TaskLocalsWrapper> > >::with<core::cell::Cell<ptr_const$<async_std::task::task_locals_wrapper::TaskLocalsWrapper> >,async_std::task::task_locals_wrapper::impl$0     
+            at /rustc/d5a82bbd26e1ad8b7401f6a718a9c57c96905483\library\std\src\thread\local.rs:422
+35: async_std::task::task_locals_wrapper::TaskLocalsWrapper::set_current<async_std::task::builder::impl$0::blocking::closure$0::closure_env$0<enum2$<cect::main::async_block_env$0>,enum2$<core::result::Result<tuple$<>,anyhow::Error> > >,enum2$<core::result::Re     
+            at C:\Users\jnesb\.cargo\registry\src\github.com-1ecc6299db9ec823\async-std-1.9.0\src\task\task_locals_wrapper.rs:55
+36: async_std::task::builder::impl$0::blocking::closure$0<enum2$<cect::main::async_block_env$0>,enum2$<core::result::Result<tuple$<>,anyhow::Error> > >
+            at C:\Users\jnesb\.cargo\registry\src\github.com-1ecc6299db9ec823\async-std-1.9.0\src\task\builder.rs:168
+37: std::thread::local::LocalKey<core::cell::Cell<usize> >::try_with<core::cell::Cell<usize>,async_std::task::builder::impl$0::blocking::closure_env$0<enum2$<cect::main::async_block_env$0>,enum2$<core::result::Result<tuple$<>,anyhow::Error> > >,enum2$<core::r     
+            at /rustc/d5a82bbd26e1ad8b7401f6a718a9c57c96905483\library\std\src\thread\local.rs:446
+38: std::thread::local::LocalKey<core::cell::Cell<usize> >::with<core::cell::Cell<usize>,async_std::task::builder::impl$0::blocking::closure_env$0<enum2$<cect::main::async_block_env$0>,enum2$<core::result::Result<tuple$<>,anyhow::Error> > >,enum2$<core::resul     
+            at /rustc/d5a82bbd26e1ad8b7401f6a718a9c57c96905483\library\std\src\thread\local.rs:422
+39: async_std::task::builder::Builder::blocking<enum2$<cect::main::async_block_env$0>,enum2$<core::result::Result<tuple$<>,anyhow::Error> > >
+            at C:\Users\jnesb\.cargo\registry\src\github.com-1ecc6299db9ec823\async-std-1.9.0\src\task\builder.rs:161
+40: async_std::task::block_on::block_on<enum2$<cect::main::async_block_env$0>,enum2$<core::result::Result<tuple$<>,anyhow::Error> > >
+            at C:\Users\jnesb\.cargo\registry\src\github.com-1ecc6299db9ec823\async-std-1.9.0\src\task\block_on.rs:33
+41: cect::main
+            at .\src\main.rs:27
+42: core::ops::function::FnOnce::call_once<enum2$<core::result::Result<tuple$<>,anyhow::Error> > (*)(),tuple$<> >
+            at /rustc/d5a82bbd26e1ad8b7401f6a718a9c57c96905483\library\core\src\ops\function.rs:507
+note: Some details are omitted, run with \`RUST_BACKTRACE=full\` for a verbose backtrace.
+error: process didn't exit successfully: \`target\debug\cect.exe cect.yml\` (exit code: 101)
+```
+
+### Expected Results:
+1. The application handles the expection reported

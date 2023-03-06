@@ -1,0 +1,25 @@
+num_messages: 1000
+report_period: 2
+senders:
+- failure_rate: 0.5
+  mean_time: 0.001
+- failure_rate: 0.45
+  mean_time: 0.01
+- failure_rate: 0.4
+  mean_time: 0.015
+- failure_rate: 0.35
+  mean_time: 0.02
+- failure_rate: 0.3
+  mean_time: 0.025
+- failure_rate: 0.25
+  mean_time: 0.03
+- failure_rate: 0.2
+  mean_time: 0.035
+- failure_rate: 0.15
+  mean_time: 0.04
+- failure_rate: 0.05
+  mean_time: 0.045
+- failure_rate: 0.01
+  mean_time: 0.05
+- failure_rate: 0.3
+  mean_time: 0.01

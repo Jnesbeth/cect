@@ -1,0 +1,24 @@
+### Title: failure_rate abnormally high
+
+### Reproducible Steps:
+1. In the configuration set at least one of the failure_rate for senders to 0.5. Eg: 
+```
+num_messages: 1000
+report_period: 2.0
+senders:
+  - mean_time: 0.01
+    failure_rate: 0.50
+```
+2. Run the application: cargo run -- cect.yml
+
+### Observations:
+1. The failed messages at the time of the log from Monitor seems to report incorrectly with the failure_rate set to 0.50 (%50) it seems to fail consistently at over %90 or over the reported messages sent:
+```
+1 run: [2023-03-05T17:36:58Z INFO  cect::monitor] MONITOR sent: 1000, failed: 944, rate: 32.519/s
+2 run: [2023-03-05T17:39:47Z INFO  cect::monitor] MONITOR sent: 1000, failed: 1062, rate: 31.102/s
+```
+2. Bug report 2 might be related to 3
+
+### Expected Results:
+1. The failure rate lines up with the configured variables set, where the monitoring report should report:
+send: 1000, failed: ~500
